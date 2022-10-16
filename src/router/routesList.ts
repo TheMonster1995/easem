@@ -4,20 +4,18 @@ import loadable from '@loadable/component';
 
 export const routes = [
   {
-    id: 999,
+    id: '01',
     path: '/',
-    element: () => loadable(() => import('pages/TestPage')),
+    element: () => loadable(() => import('pages/Dashboard/OrderManager')),
   },
   {
+    id: '02',
     path: '/login',
     element: () => loadable(() => import('pages/Login')),
   },
 ];
 
-// {
-//   path: '/login',
-//   element: () => loadable(() => Login),
-// },
+//
 // {
 //   path: '/resetpassword/:token',
 //   element: () => loadable(() => ResetPassword),
