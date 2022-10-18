@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes, { any } from 'prop-types';
-import { Typography, Snackbar, IconButton, Paper } from '@mui/material';
+import { Typography, Snackbar, Button, Paper } from '@mui/material';
 import useStyle from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Slide from '@mui/material/Slide';
@@ -32,17 +32,9 @@ const GeneralSnackbar: React.FC<Props> = ({ message, open, bar, onClose }) => {
             </div>
           </div>
           <div className={styles.closeContainer}>
-            <IconButton
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-              size={'small'}
-              onClick={onClose}
-            >
+            <Button size={'small'} onClick={onClose}>
               <FontAwesomeIcon icon={faTimes} className="text-[#626262]" />
-            </IconButton>
+            </Button>
           </div>
         </div>
       </Paper>

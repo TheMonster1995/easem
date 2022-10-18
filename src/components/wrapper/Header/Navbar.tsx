@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react';
-import { faFileText } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Button, Typography } from '@mui/material';
-import { useLocation } from 'react-router-dom';
-import classNames from 'classnames';
+import {
+  faFileText,
+  faSignIn,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons';
+import { Box } from '@mui/material';
+import useAuth from 'components/hooks/useAuth';
+
+import NavButton from './NavButton';
 
 const Navbar: React.FC = () => {
-  const location = useLocation();
-  const navOptions = useMemo(
+  const navOptions = useMemo<TNavOption[]>(
     () => [
       { name: 'orders', title: 'Orders', route: '/', icon: faFileText },
       {
@@ -19,29 +22,32 @@ const Navbar: React.FC = () => {
     ],
     [],
   );
+  const { logout } = useAuth();
 
   const renderOptions = () =>
-    navOptions.map((option) => (
-      <Button
-        className={classNames(
-          'rounded-lg w-36 h-8 justify-start hover:border-primary mb-4',
-          option.route === location.pathname
-            ? 'bg-primary text-light border-primary hover:bg-primary hover:text-light'
-            : 'bg-light text-primary border hover:bg-light',
-        )}
-        variant={option.name === location.pathname ? 'contained' : 'outlined'}
-        key={option.name}
-      >
-        <FontAwesomeIcon icon={option.icon} className="mr-2" />
-        <Typography className="font-semibold">{option.title}</Typography>
-      </Button>
-    ));
+    navOptions.map((option) => <NavButton data={option} key={option.name} />);
 
   return (
-    <Box className="fixed left-0 top-48 h-screen w-6 pl-12 hover:w-24">
+    <Box className="fixed left-0 top-40 h-screen w-6 pl-12 hover:w-24">
       {renderOptions()}
+      <NavButton
+        data={{
+          name: 'signout',
+          title: 'Sign out',
+          route: '',
+          icon: faSignIn,
+        }}
+        onClick={logout}
+      />
     </Box>
   );
 };
 
 export default Navbar;
+
+export type TNavOption = {
+  name: string;
+  title: string;
+  route: string;
+  icon: IconDefinition;
+};

@@ -2,6 +2,7 @@
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 type Props = { children?: JSX.Element };
 
@@ -18,11 +19,7 @@ const CustomSnackbarProvider: React.FC<Props> = (props): React.ReactElement => {
       ref={notistackRef}
       action={(key) => (
         <button onClick={onClickDismiss(key)} className="ml-20 pl-20 pr-2">
-          <FontAwesomeIcon
-            icon={['fal', 'times']}
-            size="lg"
-            className="mt-1.5"
-          />
+          <FontAwesomeIcon icon={faTimes} size="lg" className="mt-1.5" />
         </button>
       )}
       iconVariant={{

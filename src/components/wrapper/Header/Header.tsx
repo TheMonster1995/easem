@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Navbar from './Navbar';
+import { AuthContext } from 'store/authContext';
 
 const Header: React.FC = () => {
+  const { isAuthorized } = useContext(AuthContext);
+
+  const renderNavbar = () => {
+    if (isAuthorized) return <Navbar />;
+    return null;
+  };
+
   return (
     <>
       <header className="flex items-center justify-between">
@@ -10,7 +18,7 @@ const Header: React.FC = () => {
         </section>
         <section></section>
       </header>
-      <Navbar />
+      {renderNavbar()}
     </>
   );
 };

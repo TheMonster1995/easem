@@ -7,11 +7,13 @@ export const routes = [
     id: '01',
     path: '/',
     element: () => loadable(() => import('pages/Dashboard/OrderManager')),
+    loginRequired: true,
   },
   {
     id: '02',
     path: '/login',
     element: () => loadable(() => import('pages/Login')),
+    loginRequired: false,
   },
 ];
 

@@ -1,16 +1,25 @@
+import { useContext } from 'react';
 import easemApi from 'axios/easemApi';
 import { useNavigate } from 'react-router-dom';
+import { encrypt } from 'utils';
+
+import { AuthContext, AuthContextUpdate } from 'store/authContext';
 
 type ReturnType = {
-  isAuthorized: () => Promise<boolean>;
+  isAuthorized: () => boolean;
+  checkAuth: () => Promise<boolean>;
   authorize: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 };
 
 const useAuth = (): ReturnType => {
   const navigate = useNavigate();
+  const authCtx = useContext(AuthContext);
+  const updateAuth = useContext(AuthContextUpdate);
 
-  const isAuthorized = async () => {
+  const isAuthorized = () => !!authCtx?.isAuthorized;
+
+  const checkAuth = async () => {
     const accesstoken = localStorage.getItem('accesstoken');
 
     if (!accesstoken) return false;
@@ -31,8 +40,7 @@ const useAuth = (): ReturnType => {
 
     if (accesstoken) localStorage.removeItem('accesstoken');
 
-    // const encPassword = encrypt(password);
-    const encPassword = password;
+    const encPassword = encrypt(password);
 
     try {
       const login = await easemApi.post(
@@ -44,6 +52,7 @@ const useAuth = (): ReturnType => {
       );
 
       localStorage.setItem('accesstoken', login.data.payload.accessToken);
+      updateAuth(true);
     } catch (err) {
       return false;
     }
@@ -53,10 +62,11 @@ const useAuth = (): ReturnType => {
 
   const logout = () => {
     localStorage.removeItem('accesstoken');
+    updateAuth(false);
     navigate('/login');
   };
 
-  return { isAuthorized, authorize, logout };
+  return { isAuthorized, authorize, logout, checkAuth };
 };
 
 export default useAuth;

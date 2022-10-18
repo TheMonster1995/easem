@@ -2,9 +2,12 @@ import React from 'react';
 import { Routes } from 'router';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { Theme, ThemeProvider } from '@mui/material';
+
+import { OrdersProvider } from 'store/ordersContext';
 import { SnackBarProvider } from 'components';
 import getDefualtTheme from './theme/DefualtTheme';
 import { getTheme } from './theme';
+import { AuthProvider } from 'store/authContext';
 
 const App: React.FC = () => {
   const defualttheme = getDefualtTheme();
@@ -14,7 +17,11 @@ const App: React.FC = () => {
       <ThemeProvider theme={defualttheme}>
         <ThemeProvider theme={(theme: Theme): Theme => getTheme(theme)}>
           <SnackBarProvider>
-            <Routes />
+            <OrdersProvider>
+              <AuthProvider>
+                <Routes />
+              </AuthProvider>
+            </OrdersProvider>
           </SnackBarProvider>
         </ThemeProvider>
       </ThemeProvider>
