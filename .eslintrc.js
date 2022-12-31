@@ -3,7 +3,12 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  ignorePatterns: [".eslintrc.js", "postcss.config.js", "tailwind.config.js"],
+  ignorePatterns: [
+    ".eslintrc.js",
+    "postcss.config.js",
+    "tailwind.config.js",
+    "commitlint.config.js"
+  ],
   extends: [
     "react-app",
     "plugin:@typescript-eslint/recommended",

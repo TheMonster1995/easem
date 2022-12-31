@@ -183,7 +183,8 @@ const ItemManager: React.FC = () => {
           </SortableContext>
           <SortableContext
             items={
-              menu?.length > 0
+              menu?.length > 0 &&
+              menu?.find((cat) => cat.cat_id === selectedCat)?.children
                 ? menu
                     .find((cat) => cat.cat_id === selectedCat)
                     .children.filter((item) => item.status !== 'archived')
