@@ -15,6 +15,12 @@ export const routes = [
     element: () => loadable(() => import('pages/Login')),
     loginRequired: false,
   },
+  {
+    id: '03',
+    path: '/easem',
+    element: () => loadable(() => import('pages/Dashboard/ItemManager')),
+    loginRequired: true,
+  },
 ];
 
 //

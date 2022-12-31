@@ -52,6 +52,7 @@ const useAuth = (): ReturnType => {
       );
 
       localStorage.setItem('accesstoken', login.data.payload.accessToken);
+      localStorage.setItem('cafe_id__easem', login.data.payload.cafe_id);
       updateAuth(true);
     } catch (err) {
       return false;
@@ -62,6 +63,7 @@ const useAuth = (): ReturnType => {
 
   const logout = () => {
     localStorage.removeItem('accesstoken');
+    localStorage.removeItem('cafe_id__easem');
     updateAuth(false);
     navigate('/login');
   };

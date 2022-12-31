@@ -1,38 +1,38 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
-import { AuthContext } from 'store/authContext';
-import useOrder from 'components/hooks/useOrder';
-import { OrdersContext, TOrder } from 'store/ordersContext';
+import { OrdersContext } from 'store/ordersContext';
 import OrderList from './OrderList';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const OrderManager: React.FC = () => {
-  const [orders, setOrders] = useState<TOrder[]>([]);
-  const { getOrders: getOrdersStore } = useContext(OrdersContext);
-  const authCtx = useContext(AuthContext);
-  const { getOrders, getUpdates } = useOrder();
+  const [newOpen, setNewOpen] = useState(false);
+  const { getOrders } = useContext(OrdersContext);
 
-  useEffect(() => {
-    if (!authCtx?.isAuthorized) return;
-    getOrders();
-    const updateInterval = setInterval(() => {
-      const updates = getUpdates();
-      if (!updates) clearInterval(updateInterval);
-    }, 30 * 1000);
-    return () => clearInterval(updateInterval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authCtx?.isAuthorized]);
-
-  useEffect(() => {
-    if (getOrdersStore) setOrders(getOrdersStore());
-  }, [getOrdersStore]);
+  const orders = getOrders();
 
   return (
     <section className="pl-64">
-      <Typography variant="h1" className="text-primary">
-        Orders <span className="italic">(live)</span>
-      </Typography>
-      <OrderList orders={orders} />
+      <Box className="flex justify-start items-center mb-4">
+        <Typography variant="h1" className="text-primary mr-8 rounded-full">
+          Orders <span className="italic">(live)</span>
+        </Typography>
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => setNewOpen(true)}
+          className="rounded-full min-w-0"
+        >
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
+          Add Item
+        </Button>
+      </Box>
+      <OrderList
+        orders={orders}
+        newOpen={newOpen}
+        closeNew={() => setNewOpen(false)}
+      />
     </section>
   );
 };

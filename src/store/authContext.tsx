@@ -8,7 +8,7 @@ export const AuthContextUpdate = createContext((status: boolean) => null);
 
 export const AuthProvider: React.FC = ({ children }): JSX.Element => {
   const [isAuthorized, setIsAuthorized] = useState<boolean>(null);
-  const AuthProvider = AuthContext.Provider;
+  const AuthProviderLoc = AuthContext.Provider;
   const AuthUpdateProvider = AuthContextUpdate.Provider;
   const { enqueueSnackbar } = useSnackbar();
   const { checkAuth } = useAuth();
@@ -23,7 +23,6 @@ export const AuthProvider: React.FC = ({ children }): JSX.Element => {
 
         if (authCheck) return setIsAuthorized(true);
 
-        enqueueSnackbar('Please login again', { variant: 'error' });
         return setIsAuthorized(false);
       } catch (err) {
         enqueueSnackbar('Please login again', { variant: 'error' });
@@ -37,9 +36,9 @@ export const AuthProvider: React.FC = ({ children }): JSX.Element => {
   const authorizeUser = (status: boolean) => setIsAuthorized(status);
 
   return (
-    <AuthProvider value={{ isAuthorized }}>
+    <AuthProviderLoc value={{ isAuthorized }}>
       <AuthUpdateProvider value={authorizeUser}>{children}</AuthUpdateProvider>
-    </AuthProvider>
+    </AuthProviderLoc>
   );
 };
 

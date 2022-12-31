@@ -7,14 +7,17 @@ import {
   OrdersContext,
   OrdersContextUpdate,
   TOrder,
+  TOrderRow,
 } from 'store/ordersContext';
 import useAuth from './useAuth';
 
 type ReturnType = {
+  createOrder: (orderData: TOrderRaw) => Promise<boolean | void>;
   updateOrder: (orderData: TOrder) => Promise<boolean | void>;
   archiveOrder: (orderId: string) => Promise<boolean | void>;
   getOrders: () => Promise<boolean>;
   getUpdates: () => Promise<boolean>;
+  setSeen: (orderId: string) => void;
 };
 
 const useOrder = (): ReturnType => {
@@ -33,15 +36,20 @@ const useOrder = (): ReturnType => {
       order.order_id !== ooi.order_id ? order : { ...order, ...ooi },
     );
 
+  const addOrder = (orderData, order_id) => [
+    { ...orderData, order_id },
+    ...getOrdersStore(),
+  ];
+
   const updateOrder = async (orderData) => {
     try {
       await easemApi.put(
-        '/order',
+        `/order/${localStorage.getItem('cafe_id__easem')}`,
         { order: orderData },
         {
           headers: {
             'Content-Type': 'application/json',
-            accesstoken: localStorage.getItem('accessToken'),
+            accesstoken: localStorage.getItem('accesstoken'),
           },
         },
       );
@@ -64,12 +72,12 @@ const useOrder = (): ReturnType => {
   const archiveOrder = async (orderId: string) => {
     try {
       await easemApi.put(
-        '/order',
-        { order: { order_id: orderId } },
+        `/order/${localStorage.getItem('cafe_id__easem')}`,
+        { order: { order_id: orderId, status: 'archived' } },
         {
           headers: {
             'Content-Type': 'application/json',
-            accesstoken: localStorage.getItem('accessToken'),
+            accesstoken: localStorage.getItem('accesstoken'),
           },
         },
       );
@@ -92,9 +100,12 @@ const useOrder = (): ReturnType => {
   const getOrders = async () => {
     if (!isAuthorized()) return false;
     try {
-      const getAllOrders = await easemApi.get('/orders', {
-        headers: { accesstoken: localStorage.getItem('accesstoken') },
-      });
+      const getAllOrders = await easemApi.get(
+        `/orders/${localStorage.getItem('cafe_id__easem')}`,
+        {
+          headers: { accesstoken: localStorage.getItem('accesstoken') },
+        },
+      );
       const allOrders = getAllOrders.data?.payload ?? [];
 
       if (allOrders.length > 0) updateOrders.updateOrders([...allOrders]);
@@ -112,13 +123,18 @@ const useOrder = (): ReturnType => {
   const getUpdates = async () => {
     if (!isAuthorized()) return false;
     try {
-      const updatedOrders = await easemApi.get('/update', {
-        headers: { accesstoken: localStorage.getItem('accesstoken') },
-      });
+      const updatedOrders = await easemApi.get(
+        `/update/${localStorage.getItem('cafe_id__easem')}`,
+        {
+          headers: { accesstoken: localStorage.getItem('accesstoken') },
+        },
+      );
       let updates = updatedOrders.data?.payload ?? [];
-      if (updates.length > 0)
+      if (updates.length > 0) {
         updates = updates.map((order) => ({ ...order, new: true }));
-      updateOrders.handleUpdates(updates);
+        enqueueSnackbar('A new order just arrived', { variant: 'success' });
+        updateOrders.handleUpdates(updates);
+      }
       return true;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -136,7 +152,58 @@ const useOrder = (): ReturnType => {
     }
   };
 
-  return { updateOrder, archiveOrder, getOrders, getUpdates };
+  const setSeen = (orderId: string) => {
+    if (!isAuthorized()) return;
+
+    const newOrdersState = getOrdersStore().map((order) =>
+      order.order_id !== orderId ? order : { ...order, new: false },
+    );
+
+    updateOrders.updateOrders(newOrdersState);
+  };
+
+  const createOrder = async (order: TOrderRaw) => {
+    if (!isAuthorized()) return;
+
+    try {
+      const newOrder = await easemApi.post(
+        `/order/new/${localStorage.getItem('cafe_id__easem')}`,
+        { order: { ...order, seen: true } },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      enqueueSnackbar('Order submitted', { variant: 'success' });
+      updateOrders.updateOrders(addOrder(order, newOrder.data.payload.orderId));
+    } catch (err: any) {
+      if (err.response?.status === '401') {
+        enqueueSnackbar('Please login first', { variant: 'error' });
+        return logout();
+      }
+      enqueueSnackbar('There was a problem. Please try again', {
+        variant: 'error',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  return {
+    createOrder,
+    updateOrder,
+    archiveOrder,
+    getOrders,
+    getUpdates,
+    setSeen,
+  };
 };
 
 export default useOrder;
+
+export type TOrderRaw = {
+  orders: TOrderRow[];
+  table: string;
+};

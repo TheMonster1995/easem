@@ -10,6 +10,13 @@ export type TTFProps = {
   onChange?: (e) => void;
   onEnterClick?: () => void;
   type?: string;
+  name?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value?: any;
+  numberType?: {
+    min?: number;
+    max?: number;
+  };
 };
 
 const TextField: React.FC<TTFProps> = ({
@@ -20,7 +27,15 @@ const TextField: React.FC<TTFProps> = ({
   onChange,
   onEnterClick,
   type = 'text',
+  name,
+  value,
+  numberType = {},
 }) => {
+  const maybeProps = {};
+
+  if (name) maybeProps['name'] = name;
+  if (value !== undefined) maybeProps['value'] = value;
+
   return (
     <MTextField
       title={title}
@@ -36,6 +51,8 @@ const TextField: React.FC<TTFProps> = ({
       }}
       type={type}
       required
+      {...maybeProps}
+      {...numberType}
     />
   );
 };

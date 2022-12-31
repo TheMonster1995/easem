@@ -31,12 +31,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     borderRadius: 10,
   },
-  closeContainer: {
-    marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-  },
 }));
 
 export default useStyles;

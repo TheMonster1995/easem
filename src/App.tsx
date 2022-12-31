@@ -8,6 +8,7 @@ import { SnackBarProvider } from 'components';
 import getDefualtTheme from './theme/DefualtTheme';
 import { getTheme } from './theme';
 import { AuthProvider } from 'store/authContext';
+import { MenuProvider } from 'store/menuContext';
 
 const App: React.FC = () => {
   const defualttheme = getDefualtTheme();
@@ -19,7 +20,9 @@ const App: React.FC = () => {
           <SnackBarProvider>
             <OrdersProvider>
               <AuthProvider>
-                <Routes />
+                <MenuProvider>
+                  <Routes />
+                </MenuProvider>
               </AuthProvider>
             </OrdersProvider>
           </SnackBarProvider>

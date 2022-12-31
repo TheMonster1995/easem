@@ -31,11 +31,6 @@ const GeneralSnackbar: React.FC<Props> = ({ message, open, bar, onClose }) => {
               <Typography className={'text-[#626262]'}>{message}</Typography>
             </div>
           </div>
-          <div className={styles.closeContainer}>
-            <Button size={'small'} onClick={onClose}>
-              <FontAwesomeIcon icon={faTimes} className="text-[#626262]" />
-            </Button>
-          </div>
         </div>
       </Paper>
     </Snackbar>

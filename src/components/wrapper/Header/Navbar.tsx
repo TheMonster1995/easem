@@ -15,8 +15,8 @@ const Navbar: React.FC = () => {
       { name: 'orders', title: 'Orders', route: '/', icon: faFileText },
       {
         name: 'itemManager',
-        title: 'Items',
-        route: '/items',
+        title: 'Menu',
+        route: '/easem',
         icon: faFileText,
       },
     ],

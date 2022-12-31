@@ -1,7 +1,7 @@
 import React, { useState, createContext, useCallback } from 'react';
 
 export const OrdersContext = createContext<{ getOrders: () => TOrder[] }>({
-  getOrders: () => [],
+  getOrders: () => null,
 });
 export const OrdersContextUpdate = createContext({
   updateOrders: (orders: TOrder[]) => null,
@@ -9,23 +9,23 @@ export const OrdersContextUpdate = createContext({
 });
 
 export const OrdersProvider: React.FC = ({ children }): JSX.Element => {
-  const [orders, setOrders] = useState<TOrder[]>([]);
-  const OrdersProvider = OrdersContext.Provider;
+  const [orders, setOrders] = useState<TOrder[]>(null);
+  const OrdersProviderLoc = OrdersContext.Provider;
   const OrdersUpdateProvider = OrdersContextUpdate.Provider;
 
   const handleUpdates = (newOrders: TOrder[]) =>
-    setOrders((lastOrders) => [...lastOrders, ...newOrders]);
+    setOrders((lastOrders) => [...newOrders, ...lastOrders]);
 
   const updateOrders = (newOrders: TOrder[]) => setOrders(newOrders);
 
-  const getOrders = useCallback(() => [...orders], [orders]);
+  const getOrders = useCallback(() => (orders ? [...orders] : null), [orders]);
 
   return (
-    <OrdersProvider value={{ getOrders }}>
+    <OrdersProviderLoc value={{ getOrders }}>
       <OrdersUpdateProvider value={{ updateOrders, handleUpdates }}>
         {children}
       </OrdersUpdateProvider>
-    </OrdersProvider>
+    </OrdersProviderLoc>
   );
 };
 
@@ -33,6 +33,7 @@ export type TOrderRow = {
   price: number;
   count: number;
   label: string;
+  item_id: string;
 };
 
 export type TOrder = {

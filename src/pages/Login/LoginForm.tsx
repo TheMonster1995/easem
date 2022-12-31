@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ import { useSnackbar } from 'notistack';
 
 import TextField, { TTFProps } from 'components/general/TextField';
 import useAuth from 'components/hooks/useAuth';
+import useLoader from 'components/hooks/useLoader';
 
 type Props = {
   onForgotPassword: (input: string, status: string) => void;
@@ -23,6 +24,9 @@ const LoginForm: React.FC<Props> = ({ onForgotPassword, defaultUsername }) => {
     getValues,
     setValue,
   } = useForm<TLoginForm>();
+  const { LoadingWrapper, isLoading, toggleLoading } = useLoader({
+    text: 'Login',
+  });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { authorize } = useAuth();
@@ -35,6 +39,7 @@ const LoginForm: React.FC<Props> = ({ onForgotPassword, defaultUsername }) => {
     username,
     password,
   }) => {
+    toggleLoading();
     const isValid = await authorize(username, password);
 
     if (isValid) {
@@ -42,6 +47,7 @@ const LoginForm: React.FC<Props> = ({ onForgotPassword, defaultUsername }) => {
       return navigate('/');
     }
 
+    toggleLoading();
     return enqueueSnackbar('Bad username/password', { variant: 'error' });
   };
 
@@ -94,11 +100,12 @@ const LoginForm: React.FC<Props> = ({ onForgotPassword, defaultUsername }) => {
           color="primary"
           className="w-full"
           onClick={() => handleSubmit(onSubmit)()}
+          disabled={isLoading}
         >
-          Login
+          <LoadingWrapper />
         </Button>
       </form>
-      <Button variant="text" color="secondary" onClick={handleResetPassword}>
+      <Button variant="text" color="secondary" onClick={() => null}>
         {
           'Have a good day :)' //Reset Password
         }
